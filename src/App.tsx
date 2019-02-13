@@ -1,91 +1,17 @@
-import React, { useState } from 'react';
+import React from 'react';
 import Cell from './components/Cell';
+import useGameReducer from './hooks/useGameReducer';
 
-const GAME_SIZE = 3;
-const MAX_PLAY_COUNT = GAME_SIZE * GAME_SIZE;
-let playCount = 0;
-
-export default function App(props: object) {
-  const [gameGrid, setGameGrid] = useState(getGameInitialState(GAME_SIZE));
-  const [currentPlayer, setCurrentPlayer] = useState('X');
-  const [winner, setWinner] = useState<string|null>(null);
-  const [isDraw, setIsDraw] = useState(false);
-
-  function getGameInitialState(size : number) : Array<Array<string>> {
-    return new Array(size).fill(null)
-      .map(() => new Array(size).fill(''));
-  }
+export default function App(props) {
+  const [state, dispatch] = useGameReducer();
+  const { gameGrid, currentPlayer, winner, isDraw } = state;
 
   function handleClick(currentValue: string, x: number, y: number) {
-    if (!!winner || currentValue !== '') return;
-    gameGrid[x][y] = currentPlayer;
-    setGameGrid(gameGrid);
-    playCount = playCount + 1;
-    const hasWon = checkWinner({ x, y });
-    if (hasWon) {
-      setWinner(currentPlayer);
-    } else {
-      changePlayer();
-      if (playCount === MAX_PLAY_COUNT) {
-        setIsDraw(true);
-      }
-    }
-  }
-
-  function changePlayer() {
-    setCurrentPlayer(currentPlayer === 'X' ? 'O' : 'X');
-  }
-
-  function checkWinnerRow(x: number) : boolean {
-    for (let i = 0; i < GAME_SIZE - 1; i++) {
-      if (gameGrid[x][i] !== gameGrid[x][i + 1]) {
-        return false;
-      }
-    }
-    return true;
-  }
-
-  function checkWinnerColumn(y: number) : boolean {
-    for (let i = 0; i < GAME_SIZE - 1; i++) {
-      if (gameGrid[i][y] !== gameGrid[i + 1][y]) {
-        return false;
-      }
-    }
-    return true;
-  }
-
-  function checkWinnerDiagonalTopLeft(): boolean {
-    for (let i = 0; i < GAME_SIZE - 1; i++) {
-      if (gameGrid[i][i] === '' || gameGrid[i][i] !== gameGrid[i + 1][i + 1]) {
-        return false;
-      }
-    }
-    return true;
-  }
-
-  function checkWinnerDiagonalTopRight(): boolean {
-    for (let i = 0, j = GAME_SIZE - 1; i < GAME_SIZE - 1; i++, j--) {
-      if (gameGrid[i][j] === '' || gameGrid[i][j] !== gameGrid[i + 1][j - 1]) {
-        return false;
-      }
-    }
-    return true;
-  }
-
-  function checkWinner(lastMove: any) : boolean {
-    const { x, y } = lastMove;
-
-    return checkWinnerRow(x)
-      || checkWinnerColumn(y)
-      || checkWinnerDiagonalTopLeft()
-      || checkWinnerDiagonalTopRight();
+    dispatch({ type: 'PLAYER_MOVE', x, y });
   }
 
   function startNewGame() {
-    setGameGrid(getGameInitialState(GAME_SIZE));
-    setWinner(null);
-    setIsDraw(false);
-    playCount = 0;
+    dispatch({ type: 'START_NEW_GAME' })
   }
 
   return (
@@ -114,7 +40,7 @@ export default function App(props: object) {
       {isDraw && <strong>DRAW!</strong>}
       {(isDraw || winner) && (
         <div>
-          <button onClick={() => startNewGame()}>restart</button>
+          <button onClick={startNewGame}>restart</button>
         </div>
       )}
     </div>
