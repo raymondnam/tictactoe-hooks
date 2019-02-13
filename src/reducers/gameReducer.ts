@@ -6,7 +6,15 @@ function getGridInitialState(size : number = GAME_SIZE) : Array<Array<string>> {
     .map(() => new Array(size).fill(''));
 }
 
-export function getInitialState() {
+interface GameState {
+  gameGrid: Array<Array<string>>
+  currentPlayer: string
+  winner: string | null,
+  isDraw: boolean,
+  playCount: number,
+};
+
+export function getInitialState(): GameState {
   return {
     gameGrid: getGridInitialState(),
     currentPlayer: 'X',
@@ -16,7 +24,7 @@ export function getInitialState() {
   };
 }
 
-export function reducer(state, action) {
+export function reducer(state: GameState, action: any) : GameState {
   switch (action.type) {
     case 'PLAYER_MOVE':
       if (!!state.winner || state.gameGrid[action.x][action.y] !== '')
