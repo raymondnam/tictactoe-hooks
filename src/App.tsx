@@ -1,6 +1,7 @@
 import React from 'react';
 import Cell from './components/Cell';
 import useGameReducer from './hooks/useGameReducer';
+import { getEmoji } from './utils/emoji';
 
 export default function App(props) {
   const [state, dispatch] = useGameReducer();
@@ -15,12 +16,13 @@ export default function App(props) {
   }
 
   return (
-    <div style={{ textAlign: 'center', margin: '20px auto' }} >
-      <h3>Tic tac toe</h3>
-      <div style={{ display: 'flex', justifyContent: 'center' }} >
+    <div className="game-container">
+      <h1 className="game-title">TIC TAC TOE</h1>
+      <h2 className="game-subtitle">with React Hooks</h2>
+      <div className="game-grid">
         {gameGrid.map((row, i) => (
           <div
-            className="row"
+            className="game-row"
             key={`row-${i}`}
           >
             {row.map((cell, j) => (
@@ -34,9 +36,9 @@ export default function App(props) {
         ))}
       </div>
       <div>
-        Current player: {currentPlayer}
+        Current player: {getEmoji(currentPlayer)}
       </div>
-      {winner && <strong>Winner: {winner}</strong>}
+      {winner && <strong>Winner: {getEmoji(winner)}</strong>}
       {isDraw && <strong>DRAW!</strong>}
       {(isDraw || winner) && (
         <div>

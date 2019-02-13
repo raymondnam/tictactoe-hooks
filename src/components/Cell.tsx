@@ -1,19 +1,16 @@
 import React from 'react';
+import { getEmoji } from '../utils/emoji';
 
 export default function Cell(props: any) {
   const { value, onClick } = props;
+  const displayValue = getEmoji(value);
+
   return (
     <div
-      className={`square square--${value}`}
-      style={{
-        border: "1px solid black",
-        height: 40,
-        width: 40,
-        textAlign: "center"
-      }}
+      className="game-cell"
       onClick={onClick}
     >
-      {value}
+      {displayValue}
     </div>
   );
 }
